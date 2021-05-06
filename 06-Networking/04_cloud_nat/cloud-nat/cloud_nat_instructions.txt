@@ -1,0 +1,145 @@
+##Creation of the environment along with the steps to test
+
+##Create the network
+
+Navigation menu > VPC Network
+Create VPC Network
+Use name “custom”
+
+Commandline use:
+gcloud compute networks create custom --project=bowtieinc-prod --description=custom --subnet-mode=custom --mtu=1460 --bgp-routing-mode=regional
+
+Subnets
+Subnet creation mode > Custom
+New Subnet
+Name > butterfly
+Region > us-east1
+IP address Range >10.0.0.0/24
+Private Google Access > Off
+Leave all other options as default
+Click Done
+
+Commandline use:
+gcloud compute networks subnets create butterfly --project=bowtieinc-prod --range=10.0.0.0/24 --network=custom --region=us-east1
+
+
+##Create instances
+
+Compute Engine > VM instances
+Create instance
+Name > bowtie-bastion
+Region > us-east1
+Zone > us-east1-b
+Machine configuration > Machine type > e2-micro
+Firewall >  Management, security, disks, networking, sole tenancy
+Networking > Network interfaces
+Network > custom
+Subnetwork > butterfly
+Leave all other options as default
+Click Create
+
+Command Line 
+gcloud beta compute --project=bowtieinc-prod instances create bowtie-bastion --zone=us-east1-b --machine-type=e2-micro --subnet=butterfly --no-address --maintenance-policy=MIGRATE --service-account=ACCOUNT_NUMBER-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --tags=private --image=debian-10-buster-v20200910 --image-project=debian-cloud --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=instance-1 --no-shielded-secure-boot --no-shielded-vtpm --no-shielded-integrity-monitoring --reservation-affinity=any
+
+
+Create instance
+Name > private-bowtie
+Region > us-east1
+Zone > us-east1-b
+Machine configuration > Machine type > e2-micro
+Firewall >  Management, security, disks, networking, sole tenancy
+Networking > Network interfaces
+Network > custom
+Subnetwork > butterfly
+External ip > None
+Leave all other options as default
+Click Create
+
+Command Line 
+gcloud beta compute --project=bowtieinc-prod instances create private-bowtie --zone=us-east1-b --machine-type=e2-micro --subnet=butterfly --no-address --maintenance-policy=MIGRATE --service-account=ACCOUNT_NUMBER-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --tags=private --image=debian-10-buster-v20200910 --image-project=debian-cloud --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=instance-1 --no-shielded-secure-boot --no-shielded-vtpm --no-shielded-integrity-monitoring --reservation-affinity=any
+
+
+##Create Firewall Rules
+
+VPC Network > Firewall > Create Firewall Rule
+Name > bastion-access
+Direction of traffic > ingress
+Action on match > allow
+Targets >  Specified target tags
+Target tags > bastion
+Source filter > IP range
+Source IP ranges > 0.0.0.0/0
+Specified Protocols and ports
+tcp > 22
+Click Create.
+
+Commandline use:
+gcloud compute --project=bowtieinc-prod firewall-rules create bastion-access --direction=INGRESS --priority=1000 --network=custom --action=ALLOW --rules=tcp:22 --source-ranges=0.0.0.0/0
+
+Communication steps:
+1.ssh into the public instance from cloud shell   
+  gcloud compute ssh bastion-bowtie --zone us-east1-b 
+
+2.Test connection to internet by updating all packages on the server 
+  sudo apt-get update  
+
+3.ssh into the private instance 
+  gcloud compute ssh private-bowtie --zone us-east1-b --internal-ip 
+  Are you sure you want to continue connecting (yes/no)? yes 
+
+4.Test connection to internet by updating all packages on the server 
+  sudo apt-get update
+  This command will hang and you can cancel after experiencing this by pressing CTRL+C 
+
+
+##Create NAT gateway
+
+Nav > Network Services > Cloud NAT > Get Started
+Gateway Name > bowtie-nat 
+VPC network > custom 
+Region > us-east1 
+Cloud Router > Create new router 
+Name > bowtie-router 
+Create
+NAT mapping > Source (internal) > Custom 
+Subnet Name > butterfly (10.0.0.0/24) 
+IP ranges > Selected: all 
+NAT IP addresses > Automatic (recommended) 
+Advanced configurations 
+Stackdriver logging > Translation and errors 
+Minimum ports per VM instance > 64 
+Leave all other options as default 
+Click Create
+
+Communication steps:
+1.Test connection to internet by downloading a list of updated or new packages 
+  sudo apt-get update
+  You should now have access and be able to download a list of packages 
+
+##TEARDOWN of resources used 
+
+##Delete Cloud NAT gateway 
+Nav > Network Services > Cloud NAT
+Select bowtie-nat > Delete 
+
+##Delete Instances
+Nav > Compute Engine > VM instances 
+Select both instances > Delete
+
+Commandline use: 
+gcloud compute instances delete bastion-bowtie --zone us-east1-b
+gcloud compute instances delete private-bowtie --zone us-east1-b  
+
+##Delete firewall rules 
+Nav > VPC network > Firewall
+Select firewall rule > bastion-access > Delete 
+
+##Delete cloud router 
+Nav > Hybrid Connectivity > Cloud routers
+Select cloud router > Delete  
+
+##Delete custom VPC 
+Nav > VPC Network > VPC network 
+custom > delete VPC network 
+Delete VPC network > Delete 
+Do this for other VPC Network in other project 
