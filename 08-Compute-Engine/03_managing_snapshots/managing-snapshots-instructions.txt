@@ -122,8 +122,8 @@ gcloud compute disks add-resource-policies bowtie-instance --resource-policies b
 ##Change user from service account user to user
 gcloud auth login
 copy authorization url and paste in browser
-you will prompted to login with your Gmail account
-login with Gmail account of your user
+you will prompted to login with your user account
+login with user account
 copy authorization code and paste in shell 
 
 ##Create schedule
