@@ -1,0 +1,83 @@
+##Open Cloud Shell
+##Clone repository if you haven't already done so
+
+##If you have already cloned the course repository, you can skip this step
+
+cd ~
+git clone https://github.com/antonitz/google-cloud-professional-cloud-architect/tree/main/10-Serverless-Services.git 
+
+##Make sure your repo copy is up to date
+
+cd google-cloud-professional-cloud-architect
+git pull
+cd 10-Serverless-Services/01_serverless-bowties
+
+##Launch serverless-bowties-1 
+
+cd sitev1
+gcloud app deploy --version 1
+You may get a popup asking to authorize this API call using your credentials
+Click Authorize
+Do you want to continue (Y/n)? > y 
+
+##Verify the deployment
+
+App Engine > Versions 
+Click on the Version 1 hotlink to open webpage
+You will get a redirect notice for the application 
+Click on the hyperlink to the url to view your application
+Verify webpage is displayed
+
+##Launch serverless-bowties-2 
+
+cd ../sitev2
+gcloud app deploy --version 2
+You may get a popup asking to authorize this API call using your credentials
+Click Authorize
+Do you want to continue (Y/n)? > y 
+
+##Verify the deployment
+
+App Engine > Versions 
+Click on the Version 2 hotlink to open webpage
+You will get a redirect notice for the application 
+Click on the hyperlink to the url to view your application
+Verify webpage is displayed
+
+##Migrate traffic back to Version 1
+
+Check the box next to Version 1
+At the top menu, click on 'Migrate Traffic'
+When complete, verify webpage for Version 1 is displayed
+
+##Split Traffic to both Versions
+
+At the top menu, click on 'Split Traffic'
+Split traffic by > Random
+Traffic allocation
+Version 2 > Allocation 50%
+Version 1 > Allocation 50%
+Click Save
+
+Commanline use:
+
+gcloud app services set-traffic SERVICE_NAME --splits VERSION1=VERSION1_WEIGHT,VERSION2=VERSION2_WEIGHT --split-by random
+
+##Verify traffic allocation 
+
+Services
+Click on the hyperlink  to the url beside your default service to view your application
+Verify webpage is displayed
+Refresh your webpage until you see Version 2 
+Refresh your webpage again until you see Version 1
+
+##Cleanup to not incur costs
+Settings > Disable application
+You will be prompted to type in your AppID 
+Type it in the box provided
+Click Disable
+
+Click on the link to your Cloud Storage bucket
+Make sure there are no files in this bucket 
+Delete the bucket named staging.PROJECT_ID.appspot.com 
+Delete the bucket named us.artifacts.PROJECT_ID.appspot.com 
