@@ -2,7 +2,7 @@
 ##Clone repository and build image
 
 cd ~
-git clone https://github.com/antonitz/google-cloud-professional-cloud-architect/
+git clone https://github.com/antonitz/google-cloud-professional-cloud-architect.git
 cd 11-Kubernetes-Engine-and-Containers/box_of_bowties/container
 ls 
 
