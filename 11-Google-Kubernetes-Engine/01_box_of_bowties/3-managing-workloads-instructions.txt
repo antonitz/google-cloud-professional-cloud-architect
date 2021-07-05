@@ -11,7 +11,7 @@ kubectl get pods ##notice there is 3 pods again
 
 Open cloud shell
 cd ~
-cd google-cloud-associate-cloud-engineer/09-Kubernetes-Engine-and-Containers/box_of_bowties/container
+cd google-cloud-professional-cloud-architect/11-Google-Kubernetes-Engine/01_box_of_bowties/container
 edit index.html
 
 ##Cloud shell editor will open up
@@ -46,3 +46,36 @@ View changes on website
 Command line use
 
 kubectl set image deployment/boxofbowties boxofbowties=gcr.io/${GOOGLE_CLOUD_PROJECT}/boxofbowties:1.0.1
+
+
+##Cleanup resources 
+##Delete container images in container registry
+
+gcloud container images delete gcr.io/${GOOGLE_CLOUD_PROJECT}/boxofbowties:1.0.0
+gcloud container images delete gcr.io/${GOOGLE_CLOUD_PROJECT}/boxofbowties:1.0.1
+
+##Delete artifacts in Cloud Storage
+
+Nav > Cloud Storage
+Drill into PROJECT_NAME_cloudbuild
+Delete sources folder
+
+##Delete boxofbowties-service
+
+Nav > Kubernetes Engine > Services & Ingress
+Select boxofbowties-service > Delete 
+
+##Delete Workload 
+
+Kubernetes Engine > Workloads 
+Select boxofbowties > Delete 
+
+## Delete Cluster
+
+Kubernetes Engine > Clusters 
+Select bowtie-cluster > Delete
+
+
+
+
+
