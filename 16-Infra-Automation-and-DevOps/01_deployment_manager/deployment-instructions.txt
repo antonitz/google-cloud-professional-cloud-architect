@@ -1,42 +1,19 @@
 
 ##Open Cloud shell in console
-Click on Cloud Shell buttton
+Click on Cloud Shell button
 Open Editor
 
 ##Change to dark theme (optional)
 File > Settings > Color theme > Dark (Visual Studio)
 
-##Recreate yaml and jinja files in Editor
+##Clone git repo into Cloud Shell Editor 
+git clone https://github.com/antonitz/google-cloud-professional-cloud-architect.git
 
-##Create folder in Editor
-File > New folder
-Rename folder "templates"
-
-##Recreate bowtie-deploy.yaml 
-Editor > File > New File 
-Rename file "bowtie-deploy.yaml"
-In the github repo, under 05_deployment_manager > copy all the content inside bowtie-deploy.yaml 
-Paste contents into bowtie-deploy.yaml 
-File > Save
-
-##Recreate bowtie-network.jinja 
-Editor > File > New File 
-Rename file "bowtie-network.jinja"
-In the github repo, under 05_deployment_manager > copy all the content inside bowtie-network.jinja 
-Paste contents into bowtie-network.jinja 
-File > Save
-
-##Recreate bowtie-webserver.jinja 
-Editor > File > New File 
-Rename file "bowtie-webserver.jinja"
-In the github repo, under 05_deployment_manager > copy all the content inside bowtie-webserver.jinja 
-Paste contents into bowtie-webserver.jinja 
-File > Save
-
-
+##Inspect yaml and jinja files in Editor
+cd google-cloud-professional-cloud-architect/16-Infra-Automation-and-DevOps/01_deployment_manager/templates
+ls 
 
 ##Execute a mock deploy using "bowtie-deploy" configuration
-cd templates/
 gcloud config set project PROJECT_NAME
 gcloud deployment-manager deployments create bowtie-deploy --config bowtie-deploy.yaml --preview
 
