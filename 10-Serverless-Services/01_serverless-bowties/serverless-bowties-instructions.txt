@@ -4,7 +4,7 @@
 ##If you have already cloned the course repository, you can skip this step
 
 cd ~
-git clone https://github.com/antonitz/google-cloud-professional-cloud-architect/tree/main/10-Serverless-Services.git 
+git clone https://github.com/antonitz/google-cloud-professional-cloud-architect.git
 
 ##Make sure your repo copy is up to date
 
